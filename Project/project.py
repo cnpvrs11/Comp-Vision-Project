@@ -1,3 +1,7 @@
+# 2301861680 - Cindy Natasya
+# 2301867873 - Yulia Stefani
+
+# Import Library
 import numpy as np
 import cv2 as cv2
 import matplotlib.pyplot as plt
