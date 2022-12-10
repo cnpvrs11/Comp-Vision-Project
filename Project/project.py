@@ -50,7 +50,7 @@ def get_class_id(root_path, train_names):
             train_image_list.append(root_path+'/'+train_class_path+'/'+image_path)
             image_classes_list.append(id)
     return(train_image_list,image_classes_list)
-
+#test
 def detect_faces_and_filter(image_list, image_classes_list=None):
     '''
         To detect a face from given image list and filter it if the face on
