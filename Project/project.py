@@ -6,6 +6,7 @@ from scipy.cluster.vq import *
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import LinearSVC
 
+# Hi Cindy
 def get_path_list(root_path):
     '''
         To get a list of path directories from root path
