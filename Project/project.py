@@ -48,13 +48,14 @@ def get_class_id(root_path, train_names):
     '''
     train_image_list = []
     image_classes_list = []
+
     for id, train_class_path in enumerate(train_names):
-        image_train_path_list = os.listdir(root_path+'/'+train_class_path)
+        image_train_path_list = os.listdir(root_path + '/' + train_class_path)
         for image_path in image_train_path_list:
-            train_image_list.append(root_path+'/'+train_class_path+'/'+image_path)
+            train_image_list.append(root_path + '/' + train_class_path + '/' + image_path)
             image_classes_list.append(id)
     return(train_image_list,image_classes_list)
-#test : masukk
+
 def detect_faces_and_filter(image_list, image_classes_list=None):
     '''
         To detect a face from given image list and filter it if the face on
@@ -109,10 +110,10 @@ def get_test_images_data(test_root_path):
             List containing all loaded gray test images
     '''
     test_image_labels = os.listdir(test_root_path)
-
     test_image_list = []
+
     for image in test_image_labels:
-        test_image_list.append(test_root_path+'/'+image)
+        test_image_list.append(test_root_path + '/' + image)
     return test_image_list
     
 def predict(recognizer, test_faces_gray):
@@ -198,6 +199,7 @@ if __name__ == "__main__":
 
     train_names = get_path_list(train_root_path)
     print(train_names)
+    
     train_image_list, image_classes_list = get_class_id(train_root_path, train_names)
     print(train_image_list)
     print(image_classes_list)
