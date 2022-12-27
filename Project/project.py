@@ -98,7 +98,7 @@ def detect_faces_and_filter(image_list, image_classes_list=None):
         
         for face_rect in image_location :
             x, y, w, h = face_rect
-            cropped_gray = image_gray[y:y+w, x:x+h]
+            cropped_gray = image_gray[y:y + w, x:x + h]
             train_face_grays.append(cropped_gray)
             test_faces_rects.append(face_rect)
             
@@ -265,7 +265,7 @@ if __name__ == "__main__":
     # print(train_image_list)
     # print(image_classes_list)
     train_face_grays, _, filtered_classes_list = detect_faces_and_filter(train_image_list, image_classes_list)
-    # print(filtered_classes_list)
+    # print(train_face_grays)
     recognizer = train(train_face_grays, filtered_classes_list)
 
     '''
