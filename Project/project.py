@@ -208,8 +208,6 @@ def draw_prediction_results(predict_results, test_image_list, test_faces_rects, 
     for id, j in enumerate(test_image_list):
         x, y, w, h = test_faces_rects[id]
         img_list_rect = cv2.rectangle(j, (x, y), (x + w, y + h), (0, 255, 0), 1)
-        image_list_idx = int(predict_results[id][0])
-        label = train_names[image_list_idx]
         cv2.putText(img_list_rect, train_names, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1.5, (255, 0, 0), 1)
     
     return image_list
