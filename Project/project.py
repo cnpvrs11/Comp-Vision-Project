@@ -125,6 +125,10 @@ def train(train_face_grays, image_classes_list):
         object
             Recognizer object after being trained with cropped face images
     '''
+    
+    face_recog = cv2.face.LBPHFaceRecognizer_create() # Local Binary Pattern Histogram
+    face_recog.train(train_face_grays, np.array(image_classes_list))
+    return face_recog
 
 def get_test_images_data(test_root_path):
     '''
