@@ -90,7 +90,7 @@ def detect_faces_and_filter(image_list, image_classes_list=None):
     face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
     
     for id, train_class_path in enumerate(image_list):
-        image_gray = cv2.cvtColor(train_class_path, cv2.COLOR_BGR2GRAY)
+        image_gray = cv2.cvtColor(cv2.imread(train_class_path), cv2.COLOR_BGR2GRAY)
         image_location = face_cascade.detectMultiScale(image_gray, scaleFactor = 1.2 , minNeighbors = 5)
         
         if len(image_location) < 1:
@@ -154,7 +154,7 @@ def get_test_images_data(test_root_path):
         # test_image_list.append(test_root_path + '/' + image)
         test_image_list = test_root_path + '/' + image
         test_faces_bgr = cv2.imread(test_image_list)
-        test_faces_gray = cv2.cvtColor(test_image_list, cv2.COLOR_BGR2GRAY)
+        test_faces_gray = cv2.cvtColor(test_faces_bgr, cv2.COLOR_BGR2GRAY)
     
     return test_faces_gray
 
@@ -208,7 +208,10 @@ def draw_prediction_results(predict_results, test_image_list, test_faces_rects, 
     for id, j in enumerate(test_image_list):
         x, y, w, h = test_faces_rects[id]
         img_list_rect = cv2.rectangle(j, (x, y), (x + w, y + h), (0, 255, 0), 1)
-        cv2.putText(img_list_rect, train_names, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1.5, (255, 0, 0), 1)
+        img_list_id = int(predict_results[id][0])
+        name = train_names[img_list_id]
+        cv2.putText(img_list_rect, name, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1.5, (255, 0, 0), 1)
+        image_list.append(img_list_rect)
     
     return image_list
         
