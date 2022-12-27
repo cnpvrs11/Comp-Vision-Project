@@ -53,10 +53,12 @@ def get_class_id(root_path, train_names):
 
     for id, train_class_path in enumerate(train_names):
         image_train_path_list = os.listdir(root_path + '/' + train_class_path)
+        
         for image_path in image_train_path_list:
             train_image_list.append(root_path + '/' + train_class_path + '/' + image_path)
             image_classes_list.append(id)
-    return(train_image_list,image_classes_list)
+            
+    return train_image_list, image_classes_list
 
 def detect_faces_and_filter(image_list, image_classes_list=None):
     '''
@@ -79,6 +81,33 @@ def detect_faces_and_filter(image_list, image_classes_list=None):
         list
             List containing all filtered image classes id
     '''
+    
+    train_image_list = []
+    train_image_location = []
+    image_classes_list = []
+    
+    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    
+    for id, train_class_path in enumerate(image_list):
+        image_gray = cv2.cvtColor(train_class_path, cv2.COLOR_BGR2GRAY)
+        image_location = face_cascade.detectMultiScale(image_gray, scaleFactor = 1.2 , minNeighbors = 5)
+        
+        if len(image_location) < 1:
+            continue
+        
+        for face_rect in image_location :
+            x, y, w, h = face_rect
+            cropped_gray = image_gray[y:y+w, x:x+h]
+            train_image_list.append(cropped_gray)
+            train_image_location.append(face_rect)
+            
+            if image_list != None:
+                image_classes_list.append(image_list[id])
+        
+        return train_image_list, train_image_location, image_classes_list
+            
+    
+    
 
 def train(train_face_grays, image_classes_list):
     '''
