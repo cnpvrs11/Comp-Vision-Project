@@ -11,10 +11,43 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import LinearSVC
 
 def get_path_list(root_path):
+    '''
+        To get a list of path directories from root path
+
+        Parameters
+        ----------
+        root_path : str
+            Location of root directory
+        
+        Returns
+        -------
+        list
+            List containing the names of the sub-directories in the
+            root directory
+    '''
+    
     train_names = os.listdir(root_path)
     return train_names
 
 def get_class_id(root_path, train_names):
+    '''
+        To get a list of train images and a list of image classes id
+
+        Parameters
+        ----------
+        root_path : str
+            Location of images root directory
+        train_names : list
+            List containing the names of the train sub-directories
+        
+        Returns
+        -------
+        list
+            List containing all image in the train directories
+        list
+            List containing all image classes id
+    '''
+    
     train_image_list = []
     image_classes_list = []
 
@@ -65,6 +98,20 @@ def train(train_face_grays, image_classes_list):
     '''
 
 def get_test_images_data(test_root_path):
+    '''
+        To load a list of test images from given path list
+
+        Parameters
+        ----------
+        test_root_path : str
+            Location of images root directory
+        
+        Returns
+        -------
+        list
+            List containing all loaded gray test images
+    '''
+    
     test_image_labels = os.listdir(test_root_path)
     test_image_list = []
 
