@@ -6,10 +6,10 @@ import numpy as np
 import cv2 as cv2
 import matplotlib.pyplot as plt
 import os as os
-import math
-from scipy.cluster.vq import *
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import LinearSVC
+# import math
+# from scipy.cluster.vq import *
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.svm import LinearSVC
 
 def get_path_list(root_path):
     '''
