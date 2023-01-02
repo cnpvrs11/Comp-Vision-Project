@@ -56,7 +56,7 @@ def get_class_id(root_path, train_names):
         image_train_path_list = os.listdir(root_path + '/' + train_class_path)
         
         for image_path in image_train_path_list:
-            train_image_list.append(root_path + '/' + train_class_path + '/' + image_path)
+            train_image_list.append(cv2.imread(root_path + '/' + train_class_path + '/' + image_path))
             image_classes_list.append(id)
             
     return train_image_list, image_classes_list
@@ -85,14 +85,15 @@ def detect_faces_and_filter(image_list, image_classes_list=None):
     
     train_face_grays = []
     test_faces_rects = []
-    image_classes_list = []
+    image_classes = []
     
     face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
     
-    for id, train_class_path in enumerate(image_list):
-        image = cv2.imread(train_class_path)
-        image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        image_location = face_cascade.detectMultiScale(image_gray, scaleFactor = 1.2 , minNeighbors = 5)
+    for id, image_gray in enumerate(image_list):
+        # image_gray = cv2.cvtColor(cv2.imread(train_class_path), cv2.COLOR_BGR2GRAY)
+        
+        image_gray = cv2.cvtColor(image_gray, cv2.COLOR_BGR2GRAY)
+        image_location = face_cascade.detectMultiScale(image_gray, scaleFactor = 1.2 , minNeighbors = 7)
         if len(image_location) < 1:
             continue
         
@@ -103,10 +104,10 @@ def detect_faces_and_filter(image_list, image_classes_list=None):
             test_faces_rects.append(face_rect)
             
             if image_classes_list!= None:
-                #image_classes_list.append(image_list[id])
-                image_classes_list.append(id)
+                image_classes.append(image_classes_list[id])
+                # image_classes_list.append(id)
         
-    return train_face_grays, test_faces_rects, image_classes_list
+    return train_face_grays, test_faces_rects, image_classes
     
 
 def train(train_face_grays, image_classes_list):
@@ -147,10 +148,19 @@ def get_test_images_data(test_root_path):
     
     test_image_labels = os.listdir(test_root_path)
     test_image_list = []
+    test_faces_bgr = []
 
     for image in test_image_labels:
-        test_image_list.append(test_root_path + '/' + image)
-    return test_image_list
+        # test_image_list.append(test_root_path + '/' + image)
+        test_image_list = test_root_path + '/' + image
+        test_faces = cv2.imread(test_image_list)
+        r = 350 / test_faces.shape[0]
+        dim = (int(test_faces.shape[1] * r), 350)
+        test_faces = cv2.resize(test_faces, dim)
+        test_faces_bgr.append(test_faces)
+        # test_faces_gray = cv2.cvtColor(test_faces_bgr, cv2.COLOR_BGR2GRAY)
+    
+    return test_faces_bgr
 
     
     
@@ -204,7 +214,7 @@ def draw_prediction_results(predict_results, test_image_list, test_faces_rects, 
         img_list_rect = cv2.rectangle(j, (x, y), (x + w, y + h), (0, 255, 0), 1)
         img_list_id = int(predict_results[id][0])
         name = train_names[img_list_id]
-        cv2.putText(img_list_rect, name, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1.5, (255, 0, 0), 1)
+        cv2.putText(img_list_rect, name, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 0, 255), 1)
         image_list.append(img_list_rect)
     
     return image_list
@@ -220,7 +230,7 @@ def combine_and_show_result(image_list):
             Array containing image data
     '''
     
-    cv2.imshow('Final Result', image_list)
+    cv2.imshow('Final Result', np.concatenate(image_list, axis = 1))
     cv2.waitKey(0)
 
 '''
@@ -284,6 +294,7 @@ if __name__ == "__main__":
     test_image_list = get_test_images_data(test_root_path)
     test_faces_gray, test_faces_rects, _ = detect_faces_and_filter(test_image_list)
     predict_results = predict(recognizer, test_faces_gray)
+    print(predict_results)
     predicted_test_image_list = draw_prediction_results(predict_results, test_image_list, test_faces_rects, train_names)
     
-    # combine_and_show_result(predicted_test_image_list)
+    combine_and_show_result(predicted_test_image_list)
