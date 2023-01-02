@@ -6,10 +6,6 @@ import numpy as np
 import cv2 as cv2
 import matplotlib.pyplot as plt
 import os as os
-# import math
-# from scipy.cluster.vq import *
-# from sklearn.preprocessing import StandardScaler
-# from sklearn.svm import LinearSVC
 
 def get_path_list(root_path):
     '''
@@ -105,7 +101,6 @@ def detect_faces_and_filter(image_list, image_classes_list=None):
             
             if image_classes_list!= None:
                 image_classes.append(image_classes_list[id])
-                # image_classes_list.append(id)
         
     return train_face_grays, test_faces_rects, image_classes
     
@@ -148,19 +143,16 @@ def get_test_images_data(test_root_path):
     
     test_image_labels = os.listdir(test_root_path)
     test_image_list = []
-    test_faces_bgr = []
 
     for image in test_image_labels:
-        # test_image_list.append(test_root_path + '/' + image)
-        test_image_list = test_root_path + '/' + image
-        test_faces = cv2.imread(test_image_list)
-        r = 350 / test_faces.shape[0]
-        dim = (int(test_faces.shape[1] * r), 350)
-        test_faces = cv2.resize(test_faces, dim)
-        test_faces_bgr.append(test_faces)
+        test_faces = cv2.imread(test_root_path + '/' + image)
+        r = 200 / test_faces.shape[0]
+        dsize = (int(test_faces.shape[1] * r), 200)
+        test_faces = cv2.resize(test_faces, dsize)
+        test_image_list.append(test_faces)
         # test_faces_gray = cv2.cvtColor(test_faces_bgr, cv2.COLOR_BGR2GRAY)
     
-    return test_faces_bgr
+    return test_image_list
 
     
     
@@ -230,7 +222,7 @@ def combine_and_show_result(image_list):
             Array containing image data
     '''
     
-    cv2.imshow('Final Result', np.concatenate(image_list, axis = 1))
+    cv2.imshow('Final Result - Cindy & Yulia', np.concatenate(image_list, axis = 1))
     cv2.waitKey(0)
 
 '''
@@ -257,7 +249,6 @@ if __name__ == "__main__":
         -------------------
     '''
     train_root_path = 'dataset/train'
-    "[PATH_TO_TRAIN_ROOT_DIRECTORY]"
     '''
         -------------------
         End of modifiable
@@ -265,16 +256,10 @@ if __name__ == "__main__":
     '''
 
     train_names = get_path_list(train_root_path)
-    # print(train_names)
-    # image = cv2.imread("dataset/train/Keanu Reeves/keanu_1.jpg")
-    # print(image.shape)
     train_image_list, image_classes_list = get_class_id(train_root_path, train_names)
-    # print(train_image_list)
-    # print(image_classes_list)
     train_face_grays, _, filtered_classes_list = detect_faces_and_filter(train_image_list, image_classes_list)
-    # print(train_face_grays)
-    # print(filtered_classes_list)
     recognizer = train(train_face_grays, filtered_classes_list)
+    
     '''
         Please modify train_root_path value according to the location of
         your data train root directory
@@ -284,7 +269,6 @@ if __name__ == "__main__":
         -------------------
     '''
     test_root_path = 'dataset/test'
-    "[PATH_TO_TEST_ROOT_DIRECTORY]"
     '''
         -------------------
         End of modifiable
