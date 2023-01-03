@@ -85,17 +85,18 @@ def detect_faces_and_filter(image_list, image_classes_list=None):
     
     face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
     
-    for id, image_gray in enumerate(image_list):
+    for id, class_path in enumerate(image_list):
         # image_gray = cv2.cvtColor(cv2.imread(train_class_path), cv2.COLOR_BGR2GRAY)
         
-        image_gray = cv2.cvtColor(image_gray, cv2.COLOR_BGR2GRAY)
-        image_location = face_cascade.detectMultiScale(image_gray, scaleFactor = 1.2 , minNeighbors = 7)
+        image_gray = cv2.cvtColor(class_path, cv2.COLOR_BGR2GRAY)
+        image_location = face_cascade.detectMultiScale(image_gray, scaleFactor = 1.2 , minNeighbors = 5)
+        
         if len(image_location) < 1:
             continue
         
         for face_rect in image_location :
             x, y, w, h = face_rect
-            cropped_gray = image_gray[y:y + w, x:x + h]
+            cropped_gray = image_gray[y: y + w, x: x + h]
             train_face_grays.append(cropped_gray)
             test_faces_rects.append(face_rect)
             
@@ -146,8 +147,8 @@ def get_test_images_data(test_root_path):
 
     for image in test_image_labels:
         test_faces = cv2.imread(test_root_path + '/' + image)
-        r = 200 / test_faces.shape[0]
-        dsize = (int(test_faces.shape[1] * r), 200)
+        r = 250 / test_faces.shape[0]
+        dsize = (int(test_faces.shape[1] * r), 250)
         test_faces = cv2.resize(test_faces, dsize)
         test_image_list.append(test_faces)
         # test_faces_gray = cv2.cvtColor(test_faces_bgr, cv2.COLOR_BGR2GRAY)
