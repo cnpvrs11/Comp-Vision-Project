@@ -147,8 +147,8 @@ def get_test_images_data(test_root_path):
 
     for image in test_image_labels:
         test_faces = cv2.imread(test_root_path + '/' + image)
-        r = 250 / test_faces.shape[0]
-        dsize = (int(test_faces.shape[1] * r), 250)
+        r = 200 / test_faces.shape[0]
+        dsize = (int(test_faces.shape[1] * r), 200)
         test_faces = cv2.resize(test_faces, dsize)
         test_image_list.append(test_faces)
         # test_faces_gray = cv2.cvtColor(test_faces_bgr, cv2.COLOR_BGR2GRAY)
