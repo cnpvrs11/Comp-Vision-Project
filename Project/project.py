@@ -23,6 +23,7 @@ def get_path_list(root_path):
     '''
     
     train_names = os.listdir(root_path)
+    
     return train_names
 
 def get_class_id(root_path, train_names):
@@ -84,8 +85,8 @@ def detect_faces_and_filter(image_list, image_classes_list=None):
     
     face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
     
-    for id, class_path in enumerate(image_list):
-        image = cv2.resize(cv2.imread(class_path), dsize=(350, 350))
+    for id, image_path in enumerate(image_list):
+        image = cv2.resize(cv2.imread(image_path), dsize = (350, 350))
         image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image_location = face_cascade.detectMultiScale(image_gray, scaleFactor = 1.2 , minNeighbors = 5)
         
@@ -98,7 +99,7 @@ def detect_faces_and_filter(image_list, image_classes_list=None):
             train_face_grays.append(cropped_gray)
             test_faces_rects.append(face_rect)
             
-            if image_classes_list!= None:
+            if image_classes_list != None:
                 image_classes.append(image_classes_list[id])
         
     return train_face_grays, test_faces_rects, image_classes
@@ -121,8 +122,9 @@ def train(train_face_grays, image_classes_list):
             Recognizer object after being trained with cropped face images
     '''
     
-    recognizer = cv2.face.LBPHFaceRecognizer_create() # Local Binary Pattern Histogram
+    recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.train(train_face_grays, np.array(image_classes_list))
+    
     return recognizer
 
 def get_test_images_data(test_root_path):
@@ -144,12 +146,7 @@ def get_test_images_data(test_root_path):
     test_image_list = []
 
     for image in test_image_labels:
-        test_faces = test_root_path + '/' + image
-        # r = 200 / test_faces.shape[0]
-        # dsize = (int(test_faces.shape[1] * r), 200)
-        # test_faces = cv2.resize(test_faces, dsize)
-        test_image_list.append(test_faces)
-        # test_faces_gray = cv2.cvtColor(test_faces_bgr, cv2.COLOR_BGR2GRAY)
+        test_image_list.append(test_root_path + '/' + image)
     
     return test_image_list
 
@@ -173,8 +170,8 @@ def predict(recognizer, test_faces_gray):
     '''
     
     predict_result = []
-    for i in test_faces_gray:
-        predict_result.append(recognizer.predict(i))
+    for id in test_faces_gray:
+        predict_result.append(recognizer.predict(id))
     
     return predict_result
 
@@ -199,14 +196,16 @@ def draw_prediction_results(predict_results, test_image_list, test_faces_rects, 
             List containing all test images after being drawn with
             final result
     '''
+    
     image_list = []
-    for id, j in enumerate(test_image_list):
+    
+    for id, image_path in enumerate(test_image_list):
         x, y, w, h = test_faces_rects[id]
-        image = cv2.resize(cv2.imread(j), dsize=(350, 350))
+        image = cv2.resize(cv2.imread(image_path), dsize=(350, 350))
         img_list_rect = cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 1)
         img_list_id = int(predict_results[id][0])
         name = train_names[img_list_id]
-        cv2.putText(img_list_rect, name, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 0, 255), 1)
+        cv2.putText(img_list_rect, name, (10, 20), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 0, 255), 2)
         image_list.append(img_list_rect)
     
     return image_list
@@ -278,7 +277,6 @@ if __name__ == "__main__":
     test_image_list = get_test_images_data(test_root_path)
     test_faces_gray, test_faces_rects, _ = detect_faces_and_filter(test_image_list)
     predict_results = predict(recognizer, test_faces_gray)
-    print(predict_results)
     predicted_test_image_list = draw_prediction_results(predict_results, test_image_list, test_faces_rects, train_names)
     
     combine_and_show_result(predicted_test_image_list)
