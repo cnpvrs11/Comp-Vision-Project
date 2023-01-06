@@ -4,7 +4,6 @@
 # Import Library
 import numpy as np
 import cv2 as cv2
-import matplotlib.pyplot as plt
 import os as os
 
 def get_path_list(root_path):
@@ -52,7 +51,7 @@ def get_class_id(root_path, train_names):
         image_train_path_list = os.listdir(root_path + '/' + train_class_path)
         
         for image_path in image_train_path_list:
-            train_image_list.append(cv2.imread(root_path + '/' + train_class_path + '/' + image_path))
+            train_image_list.append(root_path + '/' + train_class_path + '/' + image_path)
             image_classes_list.append(id)
             
     return train_image_list, image_classes_list
@@ -86,9 +85,8 @@ def detect_faces_and_filter(image_list, image_classes_list=None):
     face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
     
     for id, class_path in enumerate(image_list):
-        # image_gray = cv2.cvtColor(cv2.imread(train_class_path), cv2.COLOR_BGR2GRAY)
-        
-        image_gray = cv2.cvtColor(class_path, cv2.COLOR_BGR2GRAY)
+        image = cv2.resize(cv2.imread(class_path), dsize=(350, 350))
+        image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image_location = face_cascade.detectMultiScale(image_gray, scaleFactor = 1.2 , minNeighbors = 5)
         
         if len(image_location) < 1:
@@ -146,10 +144,10 @@ def get_test_images_data(test_root_path):
     test_image_list = []
 
     for image in test_image_labels:
-        test_faces = cv2.imread(test_root_path + '/' + image)
-        r = 200 / test_faces.shape[0]
-        dsize = (int(test_faces.shape[1] * r), 200)
-        test_faces = cv2.resize(test_faces, dsize)
+        test_faces = test_root_path + '/' + image
+        # r = 200 / test_faces.shape[0]
+        # dsize = (int(test_faces.shape[1] * r), 200)
+        # test_faces = cv2.resize(test_faces, dsize)
         test_image_list.append(test_faces)
         # test_faces_gray = cv2.cvtColor(test_faces_bgr, cv2.COLOR_BGR2GRAY)
     
@@ -204,7 +202,8 @@ def draw_prediction_results(predict_results, test_image_list, test_faces_rects, 
     image_list = []
     for id, j in enumerate(test_image_list):
         x, y, w, h = test_faces_rects[id]
-        img_list_rect = cv2.rectangle(j, (x, y), (x + w, y + h), (0, 255, 0), 1)
+        image = cv2.resize(cv2.imread(j), dsize=(350, 350))
+        img_list_rect = cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 1)
         img_list_id = int(predict_results[id][0])
         name = train_names[img_list_id]
         cv2.putText(img_list_rect, name, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 0, 255), 1)
