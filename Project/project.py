@@ -4,7 +4,7 @@
 # Import Library
 import numpy as np
 import cv2 as cv2
-import os as os
+import os
 
 def get_path_list(root_path):
     '''
@@ -203,9 +203,8 @@ def draw_prediction_results(predict_results, test_image_list, test_faces_rects, 
         x, y, w, h = test_faces_rects[id]
         image = cv2.resize(cv2.imread(image_path), dsize = (350, 350))
         image_list_rect = cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 1)
-        image_list_id = int(predict_results[id][0])
-        name = train_names[image_list_id]
-        cv2.putText(image_list_rect, name, (10, 20), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 0, 255), 2)
+        artists_name = train_names[int(predict_results[id][0])]
+        cv2.putText(image_list_rect, artists_name, (10, 20), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 0, 255), 2)
         image_list.append(image_list_rect)
     
     return image_list
