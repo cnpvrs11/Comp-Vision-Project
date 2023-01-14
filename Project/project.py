@@ -3,7 +3,7 @@
 
 # Import Library
 import numpy as np
-import cv2 as cv2
+import cv2
 import os
 
 def get_path_list(root_path):
